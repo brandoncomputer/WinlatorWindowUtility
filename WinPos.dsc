@@ -12,6 +12,10 @@ if %%event
 goto %%event
 end
 
+if @equal(@winactive(c),#32770)
+goto evloop
+end
+
 %%winactive = @winactive()
 if @null(%%winactive)
 goto evloop
@@ -30,6 +34,7 @@ window click,@winexists(#shell_traywnd),20,20
 window click,@winexists(#shell_traywnd),20,20
 end
 if @equal(%%hotkey,CTRL+ALT+X)
+Info Click OK to exit.
 goto close
 end
 goto evloop
