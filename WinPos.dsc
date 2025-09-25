@@ -1,35 +1,34 @@
 dialog create,WinPos
 title WinPos
+dialog show
+dialog hide
 hotkey add,Ctrl+Alt+M
+
 hotkey add,Ctrl+Alt+X
 
-info "WinPos is active. Ctrl+Alt+M will bring up the Start Menu. When a window is maximized, it will be gracefully cascaded and repositioned. Ctrl+Alt+X to close."
+hotkey add,Ctrl+Alt+S
+
+inifile open,@path(%0)winpos.ini
+
+info "WinPos is active. Ctrl+Alt+S will bring up the Start Menu. Ctrl+Alt+M will gracefully cascade and reposition a window. Ctrl+Alt+X to close. Offset modifiers are located in Winpos.ini"
 
 :evloop
-wait 1
-%%event = @event()
-if %%event
-goto %%event
-end
-
-if @equal(@winactive(c),#32770)
-goto evloop
-end
-
-%%winactive = @winactive()
-if @null(%%winactive)
-goto evloop
-end
-if @equal(@winpos(%%winactive,s),3)
-window normal,%%winactive
-window position,%%winactive,0,0,@sysinfo(screenwidth),@diff(@sysinfo(screenheight),20)
-end
-goto evloop
-
+wait event
+goto @event()
 
 :hotkey
 %%hotkey = @hotkey()
+
 if @equal(%%hotkey,CTRL+ALT+M)
+%%winactive = @winactive()
+%%hoffset = @iniread(offsets,height)
+%%toffset = @iniread(offsets,top)
+%%loffset = @iniread(offsets,left)
+%%woffset = @iniread(offsets,width) 
+window position,%%winactive,%%toffset,%%loffset,@diff(@sysinfo(screenwidth),%%woffset),@diff(@sysinfo(screenheight),%%hoffset)
+end
+
+if @equal(%%hotkey,CTRL+ALT+S)
 window click,@winexists(#shell_traywnd),20,20
 window click,@winexists(#shell_traywnd),20,20
 end
